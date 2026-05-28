@@ -1246,6 +1246,8 @@ hamburgerBtn.addEventListener('click',()=>{
 });
 function closeMobileMenu(){hamburgerBtn.classList.remove('open');mobileMenu.classList.remove('open');document.body.style.overflow='';}
 
+const API_URL = "https://gch-backend.onrender.com";
+  
 /* ── INIT ── */
 document.addEventListener("DOMContentLoaded",()=>{
     createParticles();
@@ -1261,6 +1263,50 @@ document.addEventListener("DOMContentLoaded",()=>{
       nav.style.boxShadow = window.scrollY > 60 ? '0 10px 30px rgba(14,165,233,0.15)' : 'none';
     }, { passive: true });
 });
+
+  document.getElementById("membershipForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const submitBtn = document.getElementById("submitBtn");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting...";
+
+  // Collect form data in order they appear
+  const inputs = e.target.querySelectorAll("input, select, textarea");
+  const formData = {
+    fullName: inputs[0].value,
+    email: inputs[1].value,
+    gender: inputs[2].value,
+    phone: inputs[3].value,
+    nationality: inputs[4].value,
+    favoriteCelebrity: document.getElementById("celebritySelect").value,
+    reason: inputs[6].value
+  };
+
+  try {
+    const res = await fetch(`${API_URL}/api/apply`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData)
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      document.getElementById("membershipForm").style.display = "none";
+      document.getElementById("successMessage").style.display = "block";
+    } else {
+      alert(data.message || "Submission failed");
+    }
+  } catch (err) {
+    alert("Failed to connect to server");
+    console.error(err);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Submit Application ✦";
+  }
+});
+  
 </script> 
 
 <script src="//code.jivosite.com/widget/AHOW2nbotH" async></script>
